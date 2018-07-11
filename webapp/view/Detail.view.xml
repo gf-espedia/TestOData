@@ -1,0 +1,42 @@
+<mvc:View controllerName="comm.espedia.TestOdata.controller.Detail" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<App id="idAppControl">
+		<pages>
+			<Page title="Title" showNavButton="true" navButtonPress="onNavBack">
+				<content>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<Button id="AddEvento" icon="sap-icon://add" type="Transparent" press="onAddEvento"/>
+					</Toolbar>
+					<Table id="idProductsTable" growing="true" growingThreshold="10">
+						<columns>
+							<Column>
+								<Text text="Evento"/>
+							</Column>
+							<Column minScreenWidth="Tablet" demandPopin="true">
+								<Text text="Data Evento"/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<ObjectIdentifier title="{Evento}"/>
+									<ObjectIdentifier text="{path:'Data',type :'sap.ui.model.odata.type.DateTime', constraints : {displayFormat : 'Date'} }"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+				<footer>
+					<OverflowToolbar id="otbSubheader">
+						<Title text="Products" level="H2"/>
+						<ToolbarSpacer/>
+						<Button id="editButton" text="Edit" type="Transparent" press="onEdit"/>
+						<Button id="saveButton" text="Save" type="Transparent" press="onSave" visible="false"/>
+						<Button id="cancelButton" text="Cancel" type="Transparent" press="onCancel" visible="false"/>
+					</OverflowToolbar>
+				</footer>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

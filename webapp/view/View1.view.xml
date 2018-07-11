@@ -1,0 +1,70 @@
+<mvc:View controllerName="comm.espedia.TestOdata.controller.View1" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:l="sap.ui.layout" xmlns:form="sap.ui.layout.form" displayBlock="true" xmlns="sap.m">
+	<App id="idAppControl">
+		<pages>
+			<Page title="{i18n>title}">
+				<content>
+					<l:Grid id="nuovoDipendente" vSpacing="2" defaultSpan="XL12 L12 M12 S12" visible="false">
+						<VBox>
+							<form:SimpleForm id="form" title="{i18n>titleForm}">
+								<Label text="{i18n>Nome}" class="sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip="{i18n>Nome}"/>
+								<!--<MaskInput mask="~~~~~~~~~~" placeholderSymbol="_" placeholder="{i18n>Nome}">
+									<rules>
+										<MaskInputRule maskFormatSymbol="~" regex="[^_]"/>
+									</rules>
+								</MaskInput> -->
+								<Input id="nome" value="{/Nome}" placeholder="{i18n>Nome}"></Input>
+								<Label text="{i18n>Cognome}" class="sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip="{i18n>Cognome}"/>
+								<Input id="cognome" value="{/Cognome}" placeholder="{i18n>Cognome}"></Input>
+								<Label text="{i18n>DataNascita}" class="sapUiSmallMarginTop sapUiTinyMarginBottom" tooltip="{i18n>DataNascita}"/>
+								<!--<MaskInput mask="99-99-9999" placeholderSymbol="_" placeholder="{i18n>DataNascita}"/>-->
+								<DatePicker id="dataNascita"
+									value="{path : '/DataNascita', type : 'sap.ui.model.odata.type.DateTime', constraints : {displayFormat : 'Date'}}"
+									placeholder="{i18n>DataNascita}"/>
+							</form:SimpleForm>
+							<Toolbar>
+								<ToolbarSpacer />
+								<Button id="Add" press="onAdd" text="{i18n>add}" type="Accept"/>
+								<Button id="Cancel" press="onCancel" text="{i18n>cancel}" type="Reject" />
+							</Toolbar>
+						</VBox>
+					</l:Grid>
+					<Table id="idDipendenti" inset="false" mode="SingleSelectMaster" selectionChange="onClick" items="{/HeaderDipendentiSet}">
+						<headerToolbar>
+							<Toolbar design="Info">
+								<content>
+									<Title text="Dipendenti" level="H2"/>
+									<ToolbarSpacer/>
+									<Button icon="sap-icon://add-contact" press="onCreate"/>
+								</content>
+							</Toolbar>
+						</headerToolbar>
+						<columns>
+							<Column width="7em">
+								<Text text="Nome"/>
+							</Column>
+							<Column demandPopin="true">
+								<Text text="Cognome"/>
+							</Column>
+							<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End">
+								<Text text="Data di Nascita"/>
+							</Column>
+							<Column id="Delete" demandPopin="true" hAlign="Center"/>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<Text text="{Nome}"/>
+									<Text text="{Cognome}"/>
+									<!-- pattern: 'dd MMMM yyyy' -->
+									<Text text="{ path: 'DataNascita', type: 'sap.ui.model.type.Date', formatOptions: { style: 'short' } }"/>
+									<Button id="delRow" icon="sap-icon://delete" press="delRow"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

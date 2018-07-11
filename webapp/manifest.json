@@ -1,0 +1,140 @@
+{
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "comm.espedia.TestOdata",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"sourceTemplate": {
+			"id": "servicecatalog.connectivityComponentForManifest",
+			"version": "0.0.0"
+		},
+		"dataSources": {
+			"Z_ESPEDIA_DIPENDENTI_SRV": {
+				"uri": "/sap/opu/odata/sap/Z_ESPEDIA_DIPENDENTI_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "",
+			"favIcon": "",
+			"phone": "",
+			"phone@2": "",
+			"tablet": "",
+			"tablet@2": ""
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_belize"
+		]
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "comm.espedia.TestOdata.view.View1",
+			"type": "XML"
+		},
+		"dependencies": {
+			"minUI5Version": "1.30.0",
+			"libs": {
+				"sap.ui.layout": {},
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "comm.espedia.TestOdata.i18n.i18n"
+				}
+			},
+			"": {
+				"uri": "/sap/opu/odata/sap/Z_ESPEDIA_DIPENDENTI_SRV/",
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "OneWay",
+					"defaultCountMode": "Request"
+				},
+				"dataSource": "Z_ESPEDIA_DIPENDENTI_SRV",
+				"preload": true
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"async": true,
+				"viewPath": "comm.espedia.TestOdata.view",
+				"controlAggregation": "pages",
+				"controlId": "idAppControl",
+				"clearControlAggregation": false
+			},
+			"routes": [
+				{
+					"name": "RouteView1",
+					"pattern": "RouteView1",
+					"target": [
+						"TargetView1"
+					]
+				},
+				{
+					"name": "Detail",
+					"pattern": "Detail/{Path}",
+					"target": [
+						"Detail"
+					]
+				}
+			],
+			"targets": {
+				"TargetView1": {
+					"viewType": "XML",
+					"transition": "slide",
+					"clearControlAggregation": false,
+					"viewName": "View1",
+					"routerClass": "sap.m.routing.Router",
+					"async": true,
+					"viewPath": "comm.espedia.TestOdata.view",
+					"controlAggregation": "pages",
+					"controlId": "idAppControl"
+				},
+				"Detail": {
+					"viewType": "XML",
+					"viewName": "Detail",
+					"routerClass": "sap.m.routing.Router",
+					"async": true,
+					"viewPath": "comm.espedia.TestOdata.view",
+					"controlAggregation": "pages",
+					"controlId": "idAppControl"
+				}
+			}
+		}
+	}
+}

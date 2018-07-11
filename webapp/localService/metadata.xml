@@ -1,0 +1,20 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData" Version="1.0">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema xmlns="http://schemas.microsoft.com/ado/2008/09/edm" Namespace="Z_ESPEDIA_DIPENDENTI_SRV" xml:lang="it" sap:schema-version="1">
+			<EntityType Name="HeaderDipendenti" sap:content-version="1">
+				<Key><PropertyRef Name="Id"/></Key><Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Id" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/><Property Name="Nome" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Nome" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/><Property Name="Cognome" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Cognome" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/><Property Name="DataNascita" Type="Edm.DateTime" Nullable="false" Precision="7" sap:label="Data" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/></EntityType>
+			<EntityType Name="PosizioneDipendenti" sap:content-version="1">
+				<Key><PropertyRef Name="Id"/><PropertyRef Name="Evento"/></Key><Property Name="Id" Type="Edm.String" Nullable="false" MaxLength="32" sap:label="Id" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/><Property Name="Evento" Type="Edm.String" Nullable="false" MaxLength="50" sap:label="Evento" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/><Property Name="Data" Type="Edm.DateTime" Nullable="false" Precision="7" sap:label="Data" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false"/></EntityType>
+			<EntityContainer Name="Z_ESPEDIA_DIPENDENTI_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx"><EntitySet Name="HeaderDipendentiSet" EntityType="Z_ESPEDIA_DIPENDENTI_SRV.HeaderDipendenti" sap:creatable="false" sap:updatable="false"
+				sap:deletable="false" sap:pageable="false" sap:content-version="1"/><EntitySet Name="PosizioneDipendentiSet" EntityType="Z_ESPEDIA_DIPENDENTI_SRV.PosizioneDipendenti" sap:creatable="false"
+				sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/></EntityContainer><atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="self" href="./sap/Z_ESPEDIA_DIPENDENTI_SRV/$metadata"/><atom:link xmlns:atom="http://www.w3.org/2005/Atom" rel="latest-version" href="./sap/Z_ESPEDIA_DIPENDENTI_SRV/$metadata"/></Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
