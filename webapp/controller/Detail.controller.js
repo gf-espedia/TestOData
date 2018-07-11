@@ -124,7 +124,7 @@ sap.ui.define([
 			var oViewModel = this.getView().getModel();
 			var results = this.oTable.getModel().getData().results;
 			for (var aData of results) {
-
+// COMMENTO GITHUB
 				if (aData.IdEvento === "00000") {
 					var sPath = "/PosizioneDipendentiSet"; 
 					oViewModel.create(sPath, aData, {
