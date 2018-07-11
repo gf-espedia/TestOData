@@ -29,7 +29,13 @@
 							</Toolbar>
 						</VBox>
 					</l:Grid>
-					<Table id="idDipendenti" inset="false" mode="SingleSelectMaster" selectionChange="onClick" items="{/HeaderDipendentiSet}">
+					<Table id="idDipendenti" 
+						inset="false" 
+						items="{/HeaderDipendentiSet}"> 
+						<!-- non valido se voglio selezionare più volte la stessa riga, questa property è utile per una master detail, non per il mio caso
+						mode="SingleSelectMaster"
+						selectionChange="onClick"
+						-->
 						<headerToolbar>
 							<Toolbar design="Info">
 								<content>
@@ -52,7 +58,9 @@
 							<Column id="Delete" demandPopin="true" hAlign="Center"/>
 						</columns>
 						<items>
-							<ColumnListItem>
+							<ColumnListItem 
+								type="Active"
+								press="onClick">
 								<cells>
 									<Text text="{Nome}"/>
 									<Text text="{Cognome}"/>

@@ -86,7 +86,6 @@ sap.ui.define([
 		},
 
 		rebindTable: function (oTemplate, sKeyboardMode) {
-			debugger;
 			this.oTable.bindItems({
 				path: "/results",
 				template: oTemplate
@@ -110,6 +109,8 @@ sap.ui.define([
 
 		onEdit: function () {
 			this.aCollection = jQuery.extend(true, [], this.tableModel.getProperty("/results"));
+			this.byId("AddEvento").setVisible(true);
+			this.byId("DeleteAll").setVisible(true);
 			this.byId("editButton").setVisible(false);
 			this.byId("saveButton").setVisible(true);
 			this.byId("cancelButton").setVisible(true);
@@ -117,45 +118,106 @@ sap.ui.define([
 		},
 
 		onSave: function () {
+			this.getView().setBusyIndicatorDelay(0);
+			this.getView().setBusy(true);
+			//layout
+			this.byId("AddEvento").setVisible(false);
+			this.byId("DeleteAll").setVisible(false);
 			this.byId("saveButton").setVisible(false);
 			this.byId("cancelButton").setVisible(false);
 			this.byId("editButton").setVisible(true);
-			debugger;
+			// gestione batch
 			var oViewModel = this.getView().getModel();
+			oViewModel.setUseBatch(true);
+			var changeSetId = "SetId";
+			oViewModel.setDeferredGroups([changeSetId]);
+			var mParameters = {
+				"groupId": changeSetId,
+				"changeSetId": changeSetId
+			};
+			var batchSuccess = function (oData) {
+				this.getView().setBusy(false);
+				sap.m.MessageToast.show("Data Saved");
+				this.rebindTable(this.oReadOnlyTemplate, "Navigation");
+			}.bind(this);
+			var batchError = function (err) {
+				this.getView().setBusy(false);
+				MessageBox.error(err.message);
+				this.rebindTable(this.oReadOnlyTemplate, "Navigation");
+			}.bind(this);
+			// dati
 			var results = this.oTable.getModel().getData().results;
 			for (var aData of results) {
-// COMMENTO GITHUB
+
 				if (aData.IdEvento === "00000") {
-					var sPath = "/PosizioneDipendentiSet"; 
-					oViewModel.create(sPath, aData, {
+					var sPath = "/PosizioneDipendentiSet";
+					// non va bene su chiamate multiple... devo gestirmi il batch
+					/*oViewModel.create(sPath, aData, {
 						"success": function () {
 							this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 						}.bind(this),
 						"error": function (err) {
+							this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 							sap.m.MessageToast.show("Dati non salvati per: " + aData.Evento);
 						}
-					});
-				} 
-				else {
+					}); */
+					oViewModel.create(sPath, aData, mParameters);
+				} else {
 					var sPath = "/PosizioneDipendentiSet(Id='" + aData.Id + "',IdEvento='" + aData.IdEvento + "')";
-					oViewModel.update(sPath, aData, {
+					// non va bene su chiamate multiple... devo gestirmi il batch
+					/*oViewModel.update(sPath, aData, {
 						"success": function () {
 							this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 						}.bind(this),
 						"error": function (err) {
+							this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 							sap.m.MessageToast.show("schifo!");
 						}
-					});
+					});*/
+					oViewModel.update(sPath, aData, mParameters);
 				}
 			}
+			//lancio l'esecuzione del batch
+			oViewModel.submitChanges({
+				"groupId": changeSetId,
+				"changeSetId": changeSetId,
+				"success": batchSuccess,
+				"error": batchError
+			});
 		},
 
 		onCancel: function () {
+			this.byId("AddEvento").setVisible(false);
+			this.byId("DeleteAll").setVisible(false);
 			this.byId("cancelButton").setVisible(false);
 			this.byId("saveButton").setVisible(false);
 			this.byId("editButton").setVisible(true);
 			this.tableModel.setProperty("/results", this.aCollection);
 			this.rebindTable(this.oReadOnlyTemplate, "Navigation");
+		},
+
+		onDeleteAll: function () {
+			var oViewModel = this.getView().getModel();
+			oViewModel.callFunction("/DeleteAllEvents", {
+				method: 'POST',
+				urlParameters: {
+					"Id": this.id
+				},
+				success:
+					(oData) => {
+						this.tableModel.setData({
+							"results": []
+						});
+						this.rebindTable(this.oReadOnlyTemplate, "Navigation")
+					},
+				/*function (oData) {
+					this.rebindTable(this.oReadOnlyTemplate, "Navigation")
+				}.bind(this),*/
+				error: function (err) {
+					sap.m.MessageToast.show("schifo!");
+					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
+				}.bind(this),
+			})
 		}
 
 	});

@@ -63,7 +63,8 @@ sap.ui.define([
 			//oRouter.navTo("Detail");
 
 			//CON PARAMETRI
-			var sPath = oEvent.getParameter("listItem").getBindingContext().getPath();
+			//var sPath = oEvent.getParameter("listItem").getBindingContext().getPath(); //chiamata da Table
+			var sPath = oEvent.getSource().getBindingContext().getPath(); // chiamata da ColumnListItem 
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.navTo("Detail", {
 				Path: sPath.substr(1)

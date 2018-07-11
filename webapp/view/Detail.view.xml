@@ -6,7 +6,8 @@
 				<content>
 					<Toolbar>
 						<ToolbarSpacer/>
-						<Button id="AddEvento" icon="sap-icon://add" type="Transparent" press="onAddEvento"/>
+						<Button id="AddEvento" icon="sap-icon://add" type="Transparent" press="onAddEvento" visible="false" />
+						<Button id="DeleteAll" icon="sap-icon://delete" type="Transparent" press="onDeleteAll" visible="false" />
 					</Toolbar>
 					<Table id="idProductsTable" growing="true" growingThreshold="10">
 						<columns>
