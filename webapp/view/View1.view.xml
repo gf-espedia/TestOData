@@ -23,15 +23,13 @@
 									placeholder="{i18n>DataNascita}"/>
 							</form:SimpleForm>
 							<Toolbar>
-								<ToolbarSpacer />
+								<ToolbarSpacer/>
 								<Button id="Add" press="onAdd" text="{i18n>add}" type="Accept"/>
-								<Button id="Cancel" press="onCancel" text="{i18n>cancel}" type="Reject" />
+								<Button id="Cancel" press="onCancel" text="{i18n>cancel}" type="Reject"/>
 							</Toolbar>
 						</VBox>
 					</l:Grid>
-					<Table id="idDipendenti" 
-						inset="false" 
-						items="{/HeaderDipendentiSet}"> 
+					<Table id="idDipendenti" inset="false" alternateRowColors="true" items="{/HeaderDipendentiSet}">
 						<!-- non valido se voglio selezionare più volte la stessa riga, questa property è utile per una master detail, non per il mio caso
 						mode="SingleSelectMaster"
 						selectionChange="onClick"
@@ -40,6 +38,7 @@
 							<Toolbar design="Info">
 								<content>
 									<Title text="Dipendenti" level="H2"/>
+									<SearchField id="filter" placeholder="Filter" value="{ui>/globalFilter}" search="filterGlobally" width="15%" />
 									<ToolbarSpacer/>
 									<Button icon="sap-icon://add-contact" press="onCreate"/>
 								</content>
@@ -58,13 +57,10 @@
 							<Column id="Delete" demandPopin="true" hAlign="Center"/>
 						</columns>
 						<items>
-							<ColumnListItem 
-								type="Active"
-								press="onClick">
+							<ColumnListItem type="Active" press="onClick">
 								<cells>
 									<Text text="{Nome}"/>
 									<Text text="{Cognome}"/>
-									<!-- pattern: 'dd MMMM yyyy' -->
 									<Text text="{ path: 'DataNascita', type: 'sap.ui.model.type.Date', formatOptions: { style: 'short' } }"/>
 									<Button id="delRow" icon="sap-icon://delete" press="delRow"/>
 								</cells>

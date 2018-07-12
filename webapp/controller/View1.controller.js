@@ -1,6 +1,8 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
-], function (Controller) {
+	"sap/ui/core/mvc/Controller",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (Controller, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("comm.espedia.TestOdata.controller.View1", {
@@ -12,6 +14,32 @@ sap.ui.define([
 				"DataNascita": new Date()
 			});
 			this.getView().byId("form").setModel(this.formModel);
+
+			this.getView().setModel(new sap.ui.model.json.JSONModel({
+				globalFilter: "",
+				availabilityFilterOn: false,
+				cellFilterOn: false
+			}), "ui");
+			this._oGlobalFilter = null;
+		},
+
+		_filter: function () {
+			var oFilter = null;
+			oFilter = this._oGlobalFilter;
+			var oItems = this.byId("idDipendenti").getBinding("items");
+			oItems.filter(oFilter, "Application");
+		},
+		
+		filterGlobally : function(oEvent) {
+			var sQuery = oEvent.getParameter("query");
+			this._oGlobalFilter = null;
+			if (sQuery) {
+				this._oGlobalFilter = new Filter([
+					new Filter("Nome", FilterOperator.Contains, sQuery),
+					new Filter("Cognome", FilterOperator.Contains, sQuery)
+				], true);
+			}
+			this._filter();
 		},
 
 		delRow: function (oEvent) {
@@ -34,6 +62,7 @@ sap.ui.define([
 			oModel.create(sPath, newRow, {
 				"success": function () {
 					sap.m.MessageToast.show("yeeeeeh, aggiunto!");
+					this.setGridVisible("nuovoDipendente", false);
 				},
 				"error": function () {
 					sap.m.MessageToast.show("schifo!");
@@ -45,9 +74,9 @@ sap.ui.define([
 			this.setGridVisible("nuovoDipendente", false);
 		},
 
-		setGridVisible: function (ID, oValue) {
+		setGridVisible: function (ID, sValue) {
 			var grid = this.getView().byId(ID);
-			grid.setVisible(oValue);
+			grid.setVisible(sValue);
 		},
 
 		onCreate: function (oEvent) {

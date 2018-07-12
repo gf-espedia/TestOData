@@ -2,7 +2,7 @@
 	xmlns:html="http://www.w3.org/1999/xhtml">
 	<App id="idAppControl">
 		<pages>
-			<Page title="Title" showNavButton="true" navButtonPress="onNavBack">
+			<Page id="pageDetail" title="{/dipendente}" showNavButton="true" navButtonPress="onNavBack">
 				<content>
 					<Toolbar>
 						<ToolbarSpacer/>
@@ -30,11 +30,10 @@
 				</content>
 				<footer>
 					<OverflowToolbar id="otbSubheader">
-						<Title text="Products" level="H2"/>
 						<ToolbarSpacer/>
 						<Button id="editButton" text="Edit" type="Transparent" press="onEdit"/>
-						<Button id="saveButton" text="Save" type="Transparent" press="onSave" visible="false"/>
-						<Button id="cancelButton" text="Cancel" type="Transparent" press="onCancel" visible="false"/>
+						<Button id="saveButton" text="Save" type="Accept" press="onSave" visible="false"/>
+						<Button id="cancelButton" text="Cancel" type="Reject" press="onCancel" visible="false"/>
 					</OverflowToolbar>
 				</footer>
 			</Page>

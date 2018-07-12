@@ -40,6 +40,11 @@ sap.ui.define([
 					})
 				]
 			});
+			var pageModel = new sap.ui.model.json.JSONModel({
+				"dipendente": "Dipendente"
+			});
+			var oPage = this.getView().byId("pageDetail");
+			oPage.setModel(pageModel);
 		},
 
 		_onObjectMatched: function (oEvent) {
@@ -57,6 +62,24 @@ sap.ui.define([
 					this.tableModel.setData(oData);
 					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 				}.bind(this),
+				"error": function (err) {
+					sap.m.MessageToast.show("schifo!");
+				}
+			});
+
+			var pageModel = new sap.ui.model.json.JSONModel({
+				"dipendente": "Dipendente"
+			});
+			var oPage = this.getView().byId("pageDetail");
+			var oPageModel = oPage.getModel();
+
+			oViewModel.read(this.sPath, {
+				"success": function (oData) {
+					var oPageData = {
+						"dipendente": oData.Nome + " " + oData.Cognome
+					}
+					oPageModel.setData(oPageData);
+				},
 				"error": function (err) {
 					sap.m.MessageToast.show("schifo!");
 				}
@@ -90,6 +113,20 @@ sap.ui.define([
 				path: "/results",
 				template: oTemplate
 			}).setKeyboardMode(sKeyboardMode);
+			//layout
+			if (sKeyboardMode === 'Edit') {
+				this.byId("AddEvento").setVisible(true);
+				this.byId("DeleteAll").setVisible(true);
+				this.byId("editButton").setVisible(false);
+				this.byId("saveButton").setVisible(true);
+				this.byId("cancelButton").setVisible(true);
+			} else {
+				this.byId("AddEvento").setVisible(false);
+				this.byId("DeleteAll").setVisible(false);
+				this.byId("cancelButton").setVisible(false);
+				this.byId("saveButton").setVisible(false);
+				this.byId("editButton").setVisible(true);
+			}
 		},
 
 		onAddEvento: function () {
@@ -109,23 +146,12 @@ sap.ui.define([
 
 		onEdit: function () {
 			this.aCollection = jQuery.extend(true, [], this.tableModel.getProperty("/results"));
-			this.byId("AddEvento").setVisible(true);
-			this.byId("DeleteAll").setVisible(true);
-			this.byId("editButton").setVisible(false);
-			this.byId("saveButton").setVisible(true);
-			this.byId("cancelButton").setVisible(true);
 			this.rebindTable(this.oEditableTemplate, "Edit");
 		},
 
 		onSave: function () {
 			this.getView().setBusyIndicatorDelay(0);
 			this.getView().setBusy(true);
-			//layout
-			this.byId("AddEvento").setVisible(false);
-			this.byId("DeleteAll").setVisible(false);
-			this.byId("saveButton").setVisible(false);
-			this.byId("cancelButton").setVisible(false);
-			this.byId("editButton").setVisible(true);
 			// gestione batch
 			var oViewModel = this.getView().getModel();
 			oViewModel.setUseBatch(true);
@@ -187,16 +213,38 @@ sap.ui.define([
 		},
 
 		onCancel: function () {
-			this.byId("AddEvento").setVisible(false);
-			this.byId("DeleteAll").setVisible(false);
-			this.byId("cancelButton").setVisible(false);
-			this.byId("saveButton").setVisible(false);
-			this.byId("editButton").setVisible(true);
 			this.tableModel.setProperty("/results", this.aCollection);
 			this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 		},
 
 		onDeleteAll: function () {
+			var dialog = new sap.m.Dialog({
+				title: 'Confirm',
+				type: 'Message',
+				content: new sap.m.Text({
+					text: 'Are you sure you want to delete all event?'
+				}),
+				beginButton: new sap.m.Button({
+					text: 'Yes',
+					press: function () {
+						this.deleteAll();
+						dialog.close();
+					}.bind(this)
+				}),
+				endButton: new sap.m.Button({
+					text: 'Cancel',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function () {
+					dialog.destroy();
+				}
+			});
+			dialog.open();
+		},
+
+		deleteAll: function () {
 			var oViewModel = this.getView().getModel();
 			oViewModel.callFunction("/DeleteAllEvents", {
 				method: 'POST',
@@ -204,17 +252,19 @@ sap.ui.define([
 					"Id": this.id
 				},
 				success:
-					(oData) => {
-						this.tableModel.setData({
-							"results": []
-						});
-						this.rebindTable(this.oReadOnlyTemplate, "Navigation")
-					},
+				// funzione con bind
 				/*function (oData) {
 					this.rebindTable(this.oReadOnlyTemplate, "Navigation")
 				}.bind(this),*/
+				// funzione senza bind ma che funziona ugualmente (solo per funzioni dichiarate al volo)
+					(oData) => {
+					this.tableModel.setData({
+						"results": []
+					});
+					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
+				},
 				error: function (err) {
-					sap.m.MessageToast.show("schifo!");
+					sap.m.MessageToast.show("Errore");
 					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 				}.bind(this),
 			})
