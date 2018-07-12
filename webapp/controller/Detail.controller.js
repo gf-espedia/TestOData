@@ -23,13 +23,19 @@ sap.ui.define([
 					"Data": new Date()
 				}]
 			});
+
 			this.oTable = this.getView().byId("idProductsTable");
 			this.oTable.setModel(this.tableModel);
 			this.oReadOnlyTemplate = this.oTable.removeItem(0);
 			this.oEditableTemplate = new sap.m.ColumnListItem({
 				cells: [
 					new sap.m.Input({
-						value: "{Evento}"
+						value: "{Evento}",
+						id: "productInput",
+						type: "Text",
+						placeholder: "Enter event ...",
+						showValueHelp: true,
+						valueHelpRequest: this.handleValueHelp.bind(this),
 					}),
 					new sap.m.DatePicker({
 						value: "{path : 'Data', type : 'sap.ui.model.odata.type.DateTime', constraints : {displayFormat : 'Date'}}"
@@ -40,6 +46,7 @@ sap.ui.define([
 					})
 				]
 			});
+			
 			var pageModel = new sap.ui.model.json.JSONModel({
 				"dipendente": "Dipendente"
 			});
@@ -47,6 +54,7 @@ sap.ui.define([
 			oPage.setModel(pageModel);
 		},
 
+		// ************ Utilities
 		_onObjectMatched: function (oEvent) {
 			this.sPath = "/" + oEvent.getParameter("arguments").Path;
 			this.id = this.getID(this.sPath);
@@ -92,22 +100,6 @@ sap.ui.define([
 			return match[1];
 		},
 
-		onNavBack: function () {
-			// check sono in edit?
-			var saveButtonVisible = this.byId("saveButton").getVisible();
-			//if (saveButtonVisible) {
-			//};
-			//var oHistory = History.getInstance();
-			//var sPreviousHash = oHistory.getPreviousHash();
-			//if (sPreviousHash !== undefined) {
-			//	window.history.go(-1);
-			//} else {
-			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-			oRouter.navTo("RouteView1", {}, true);
-			//}
-
-		},
-
 		rebindTable: function (oTemplate, sKeyboardMode) {
 			this.oTable.bindItems({
 				path: "/results",
@@ -128,6 +120,67 @@ sap.ui.define([
 				this.byId("editButton").setVisible(true);
 			}
 		},
+
+		onNavBack: function () {
+			// check sono in edit?
+			var saveButtonVisible = this.byId("saveButton").getVisible();
+			//if (saveButtonVisible) {
+			//};
+			//var oHistory = History.getInstance();
+			//var sPreviousHash = oHistory.getPreviousHash();
+			//if (sPreviousHash !== undefined) {
+			//	window.history.go(-1);
+			//} else {
+			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+			oRouter.navTo("RouteView1", {}, true);
+			//}
+
+		},
+
+		// ************ gestione matchcode per Evento
+		handleValueHelp: function (oEvent) {
+			var sInputValue = oEvent.getSource().getValue();
+
+			this.inputId = oEvent.getSource().getId();
+			// create value help dialog
+			if (!this._valueHelpDialog) {
+				this._valueHelpDialog = sap.ui.xmlfragment(
+					"comm.espedia.TestOdata.fragment.Dialog",
+					this
+				);
+				this.getView().addDependent(this._valueHelpDialog);
+			}
+			
+			// create a filter for the binding
+			this._valueHelpDialog.getBinding("items").filter([new Filter(
+				"Evento",
+				sap.ui.model.FilterOperator.Contains, sInputValue
+			)]);
+
+			// open value help dialog filtered by the input value
+			this._valueHelpDialog.open(sInputValue);
+		},
+
+		_handleValueHelpSearch: function (evt) {
+			var sValue = evt.getParameter("value");
+			var oFilter = new Filter(
+				"Evento",
+				sap.ui.model.FilterOperator.Contains, sValue
+			);
+			evt.getSource().getBinding("items").filter([oFilter]);
+		},
+
+		_handleValueHelpClose: function (evt) {
+			var oSelectedItem = evt.getParameter("selectedItem");
+			if (oSelectedItem) {
+				var productInput = this.byId(this.inputId);
+				productInput.setValue(oSelectedItem.getTitle());
+			}
+			evt.getSource().getBinding("items").filter([]);
+		},
+		// ************ Fine gestione matchcode per Evento
+
+		// ************ Eventi
 
 		onAddEvento: function () {
 			var aResult = {

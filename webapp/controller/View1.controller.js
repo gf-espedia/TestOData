@@ -63,7 +63,7 @@ sap.ui.define([
 				"success": function () {
 					sap.m.MessageToast.show("yeeeeeh, aggiunto!");
 					this.setGridVisible("nuovoDipendente", false);
-				},
+				}.bind(this),
 				"error": function () {
 					sap.m.MessageToast.show("schifo!");
 				}

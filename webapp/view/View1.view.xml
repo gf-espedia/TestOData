@@ -29,6 +29,10 @@
 							</Toolbar>
 						</VBox>
 					</l:Grid>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<SearchField id="filter" placeholder="Filter" value="{ui>/globalFilter}" search="filterGlobally" width="15%"/>
+					</Toolbar>
 					<Table id="idDipendenti" inset="false" alternateRowColors="true" items="{/HeaderDipendentiSet}">
 						<!-- non valido se voglio selezionare più volte la stessa riga, questa property è utile per una master detail, non per il mio caso
 						mode="SingleSelectMaster"
@@ -38,9 +42,8 @@
 							<Toolbar design="Info">
 								<content>
 									<Title text="Dipendenti" level="H2"/>
-									<SearchField id="filter" placeholder="Filter" value="{ui>/globalFilter}" search="filterGlobally" width="15%" />
 									<ToolbarSpacer/>
-									<Button icon="sap-icon://add-contact" press="onCreate"/>
+									<Button icon="sap-icon://add-contact" type="Transparent" press="onCreate"/>
 								</content>
 							</Toolbar>
 						</headerToolbar>
