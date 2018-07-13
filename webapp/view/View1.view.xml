@@ -48,7 +48,7 @@
 							</Toolbar>
 						</headerToolbar>
 						<columns>
-							<Column width="7em">
+							<Column>
 								<Text text="Nome"/>
 							</Column>
 							<Column demandPopin="true">
@@ -57,7 +57,7 @@
 							<Column minScreenWidth="Desktop" demandPopin="true" hAlign="End">
 								<Text text="Data di Nascita"/>
 							</Column>
-							<Column id="Delete" demandPopin="true" hAlign="Center"/>
+							<Column id="Delete" demandPopin="true" hAlign="Right"/>
 						</columns>
 						<items>
 							<ColumnListItem type="Active" press="onClick">
@@ -65,7 +65,7 @@
 									<Text text="{Nome}"/>
 									<Text text="{Cognome}"/>
 									<Text text="{ path: 'DataNascita', type: 'sap.ui.model.type.Date', formatOptions: { style: 'short' } }"/>
-									<Button id="delRow" icon="sap-icon://delete" press="delRow"/>
+									<Button id="delRow" icon="sap-icon://sys-cancel" type="Transparent" press="delRow"/>
 								</cells>
 							</ColumnListItem>
 						</items>

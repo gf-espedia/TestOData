@@ -1,10 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
+	"comm/espedia/TestOdata/controller/Function/SearchHelp",
 	"jquery.sap.global",
 	"sap/ui/core/routing/History",
-	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator'
-], function (Controller, jQuery, History, Filter, FilterOperator) {
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (Controller, SearchHelp, jQuery, History, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("comm.espedia.TestOdata.controller.Detail", {
@@ -19,19 +20,19 @@ sap.ui.define([
 			oRouter.getRoute("Detail").attachPatternMatched(this._onObjectMatched, this);
 			this.tableModel = new sap.ui.model.json.JSONModel({
 				"results": [{
-					"Evento": "Evento",
+					"Evento": "",
 					"Data": new Date()
 				}]
 			});
 
-			this.oTable = this.getView().byId("idProductsTable");
+			this.oTable = this.getView().byId("idEventiTable");
 			this.oTable.setModel(this.tableModel);
 			this.oReadOnlyTemplate = this.oTable.removeItem(0);
 			this.oEditableTemplate = new sap.m.ColumnListItem({
 				cells: [
 					new sap.m.Input({
 						value: "{Evento}",
-						id: "productInput",
+						id: "eventoInput",
 						type: "Text",
 						placeholder: "Enter event ...",
 						showValueHelp: true,
@@ -46,7 +47,7 @@ sap.ui.define([
 					})
 				]
 			});
-			
+
 			var pageModel = new sap.ui.model.json.JSONModel({
 				"dipendente": "Dipendente"
 			});
@@ -54,18 +55,43 @@ sap.ui.define([
 			oPage.setModel(pageModel);
 		},
 
-		// ************ Utilities
+		// ------------------------------------------------------------------------------ SearchHelp
+
+		handleValueHelp: function (oEvent) {
+			SearchHelp.handleValueHelp(oEvent,this);
+		},
+
+		handleValueHelpSearch: function (oEvent) {
+			SearchHelp._handleValueHelpSearch(oEvent);
+		},
+
+		handleValueHelpClose: function (oEvent) {
+			SearchHelp._handleValueHelpClose(oEvent);
+		},
+
+		// ------------------------------------------------------------------------------ Utilities
 		_onObjectMatched: function (oEvent) {
 			this.sPath = "/" + oEvent.getParameter("arguments").Path;
 			this.id = this.getID(this.sPath);
 
 			var oViewModel = this.getOwnerComponent().getModel();
-			oViewModel.read('/PosizioneDipendentiSet', {
+			// Sostituisco con chiamata tramite Navigation Property - vanno bene entrambi i metodi
+			/*oViewModel.read('/PosizioneDipendentiSet', {
 				"filters": [new Filter({
 					path: "Id",
 					operator: FilterOperator.EQ,
 					value1: this.id
 				})],
+				"success": function (oData) {
+					this.tableModel.setData(oData);
+					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
+				}.bind(this),
+				"error": function (err) {
+					sap.m.MessageToast.show("schifo!");
+				}
+			});*/
+			var sPath = this.sPath + "/header2posizione";
+			oViewModel.read(sPath, {
 				"success": function (oData) {
 					this.tableModel.setData(oData);
 					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
@@ -124,8 +150,43 @@ sap.ui.define([
 		onNavBack: function () {
 			// check sono in edit?
 			var saveButtonVisible = this.byId("saveButton").getVisible();
-			//if (saveButtonVisible) {
-			//};
+			if (saveButtonVisible) {
+				var dialog = new sap.m.Dialog({
+					title: 'Confirm',
+					type: 'Message',
+					content: new sap.m.Text({
+						text: 'Are you sure you want to exit? Data not saved will be lost'
+					}),
+					buttons: [new sap.m.Button({
+						text: 'Continue',
+						press: function () {
+							this._confirmNavBack();
+							dialog.close();
+						}.bind(this)
+					}), new sap.m.Button({
+						text: 'Save',
+						press: function () {
+							this.onSave();
+							this._confirmNavBack();
+							dialog.close();
+						}.bind(this)
+					}), new sap.m.Button({
+						text: 'Cancel',
+						press: function () {
+							dialog.close();
+						}
+					})],
+					afterClose: function () {
+						dialog.destroy();
+					}
+				});
+				dialog.open();
+			} else {
+				this._confirmNavBack();
+			};
+		},
+
+		_confirmNavBack: function () {
 			//var oHistory = History.getInstance();
 			//var sPreviousHash = oHistory.getPreviousHash();
 			//if (sPreviousHash !== undefined) {
@@ -134,59 +195,14 @@ sap.ui.define([
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 			oRouter.navTo("RouteView1", {}, true);
 			//}
-
 		},
 
-		// ************ gestione matchcode per Evento
-		handleValueHelp: function (oEvent) {
-			var sInputValue = oEvent.getSource().getValue();
-
-			this.inputId = oEvent.getSource().getId();
-			// create value help dialog
-			if (!this._valueHelpDialog) {
-				this._valueHelpDialog = sap.ui.xmlfragment(
-					"comm.espedia.TestOdata.fragment.Dialog",
-					this
-				);
-				this.getView().addDependent(this._valueHelpDialog);
-			}
-			
-			// create a filter for the binding
-			this._valueHelpDialog.getBinding("items").filter([new Filter(
-				"Evento",
-				sap.ui.model.FilterOperator.Contains, sInputValue
-			)]);
-
-			// open value help dialog filtered by the input value
-			this._valueHelpDialog.open(sInputValue);
-		},
-
-		_handleValueHelpSearch: function (evt) {
-			var sValue = evt.getParameter("value");
-			var oFilter = new Filter(
-				"Evento",
-				sap.ui.model.FilterOperator.Contains, sValue
-			);
-			evt.getSource().getBinding("items").filter([oFilter]);
-		},
-
-		_handleValueHelpClose: function (evt) {
-			var oSelectedItem = evt.getParameter("selectedItem");
-			if (oSelectedItem) {
-				var productInput = this.byId(this.inputId);
-				productInput.setValue(oSelectedItem.getTitle());
-			}
-			evt.getSource().getBinding("items").filter([]);
-		},
-		// ************ Fine gestione matchcode per Evento
-
-		// ************ Eventi
-
+		// ------------------------------------------------------------------------------ Eventi Bottoni
 		onAddEvento: function () {
 			var aResult = {
 				"Id": this.id,
 				"IdEvento": "00000",
-				"Evento": " ",
+				"Evento": "",
 				"Data": Date()
 			};
 			var data = this.tableModel.getData().results;
@@ -280,7 +296,7 @@ sap.ui.define([
 				beginButton: new sap.m.Button({
 					text: 'Yes',
 					press: function () {
-						this.deleteAll();
+						this._deleteAll();
 						dialog.close();
 					}.bind(this)
 				}),
@@ -297,7 +313,7 @@ sap.ui.define([
 			dialog.open();
 		},
 
-		deleteAll: function () {
+		_deleteAll: function () {
 			var oViewModel = this.getView().getModel();
 			oViewModel.callFunction("/DeleteAllEvents", {
 				method: 'POST',
