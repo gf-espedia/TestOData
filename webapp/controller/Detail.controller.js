@@ -36,7 +36,7 @@ sap.ui.define([
 						type: "Text",
 						placeholder: "Enter event ...",
 						showValueHelp: true,
-						valueHelpRequest: this.handleValueHelp.bind(this),
+						valueHelpRequest: this.handleValueHelp.bind(this)
 					}),
 					new sap.m.DatePicker({
 						value: "{path : 'Data', type : 'sap.ui.model.odata.type.DateTime', constraints : {displayFormat : 'Date'}}"
@@ -111,7 +111,7 @@ sap.ui.define([
 				"success": function (oData) {
 					var oPageData = {
 						"dipendente": oData.Nome + " " + oData.Cognome
-					}
+					};
 					oPageModel.setData(oPageData);
 				},
 				"error": function (err) {
@@ -183,7 +183,7 @@ sap.ui.define([
 				dialog.open();
 			} else {
 				this._confirmNavBack();
-			};
+			}
 		},
 
 		_confirmNavBack: function () {
@@ -237,7 +237,7 @@ sap.ui.define([
 			}.bind(this);
 			var batchError = function (err) {
 				this.getView().setBusy(false);
-				MessageBox.error(err.message);
+				//MessageBox.error(err.message);
 				this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 			}.bind(this);
 			// dati
@@ -324,21 +324,24 @@ sap.ui.define([
 				},
 				success:
 				// funzione con bind
-				/*function (oData) {
-					this.rebindTable(this.oReadOnlyTemplate, "Navigation")
-				}.bind(this),*/
-				// funzione senza bind ma che funziona ugualmente (solo per funzioni dichiarate al volo)
-					(oData) => {
+					function (oData) {
 					this.tableModel.setData({
 						"results": []
 					});
 					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
-				},
+				}.bind(this),
+				// funzione senza bind ma che funziona ugualmente (solo per funzioni dichiarate al volo)
+				/*	(oData) => {
+					this.tableModel.setData({
+						"results": []
+					});
+					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
+				},*/
 				error: function (err) {
 					sap.m.MessageToast.show("Errore");
 					this.rebindTable(this.oReadOnlyTemplate, "Navigation");
-				}.bind(this),
-			})
+				}.bind(this)
+			});
 		}
 
 	});
