@@ -58,7 +58,7 @@ sap.ui.define([
 		// ------------------------------------------------------------------------------ SearchHelp
 
 		handleValueHelp: function (oEvent) {
-			SearchHelp.handleValueHelp(oEvent,this);
+			SearchHelp.handleValueHelp(oEvent, this);
 		},
 
 		handleValueHelpSearch: function (oEvent) {
@@ -242,8 +242,10 @@ sap.ui.define([
 			}.bind(this);
 			// dati
 			var results = this.oTable.getModel().getData().results;
-			for (var aData of results) {
+			var aData;
+			for (var i in results) { //aData of results non gli piace
 
+				aData = results[i];
 				if (aData.IdEvento === "00000") {
 					var sPath = "/PosizioneDipendentiSet";
 					// non va bene su chiamate multiple... devo gestirmi il batch
